@@ -1,9 +1,20 @@
 import React from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home.jsx";
+import History from "./pages/History.jsx";
+import Favorite from "./pages/Favorite.jsx";
 
 function App() {
   return (
-    <div>
-      <h2>GA SEB</h2>
+    <div className="container">
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Navigate replace to="/home" />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="history" element={<History />} />
+        <Route path="favorite" element={<Favorite />} />
+      </Routes>
     </div>
   );
 }
