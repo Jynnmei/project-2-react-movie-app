@@ -6,18 +6,20 @@ const PopularMovies = () => {
   const [movies, setMovies] = useState([]);
   const [query, setQuery] = useState("");
   const [movieFiltered, setMovieFiltered] = useState([]);
-
-  const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+  const url = "https://api.airtable.com/v0/appQwlxLJ1uNitKKv/Imported%20table";
+  const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
 
   const getPopularMovies = async () => {
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&api_key=${apiKey}`
-      );
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
       const data = await response.json();
-      console.log("Data:", data);
-      setMovies(data.results);
-      setMovieFiltered(data.results);
+      console.log("Airtable Data:", data);
+      setMovies(data.records);
+      setMovieFiltered(data.records);
       return data;
     } catch (err) {
       console.log(err);
@@ -38,7 +40,7 @@ const PopularMovies = () => {
     const lowercaseQuery = searchTerm.toLowerCase();
 
     const filtered = movies.filter((movie) =>
-      movie.title.toLowerCase().includes(lowercaseQuery)
+      movie.fields.title.toLowerCase().includes(lowercaseQuery)
     );
 
     setMovieFiltered(filtered);
@@ -55,12 +57,13 @@ const PopularMovies = () => {
       <div className="popular-movie">
         {movieFiltered.map((movie, index) => (
           <div key={index} className="movie-card">
+            <h4>{movie.fields.title}</h4>
             <img
-              src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-              alt={movie.title}
+              src={`https://image.tmdb.org/t/p/w200${movie.fields["Customize field type"]}`} // 可以换成你真正的图片字段名
+              alt={movie.fields.title}
               className="movie-poster"
             />
-            <h4>{movie.title}</h4>
+            <h5>{movie.fields.release_date}</h5>
           </div>
         ))}
       </div>

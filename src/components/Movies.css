@@ -24,8 +24,13 @@
 }
 
 h4 {
-  margin-top: 10px;
   font-size: 15px;
+}
+
+h5 {
+  margin-top: 10px;
+  font-size: 13px;
+  color: rgb(123, 136, 139);
 }
 
 .search-container {
