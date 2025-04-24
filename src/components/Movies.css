@@ -9,7 +9,7 @@
 
 .movie-card {
   width: 250px;
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 8px;
   padding: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -26,4 +26,9 @@
 h4 {
   margin-top: 10px;
   font-size: 15px;
+}
+
+.search-container {
+  margin-top: 20px;
+  margin-left: 70%;
 }

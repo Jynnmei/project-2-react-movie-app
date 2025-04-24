@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import PopularMovies from "../components/PopularMovies.jsx";
 
-const Home = () => {
+const Home = (props) => {
   return (
     <div>
-      {/* <h2>🏠 Home Page</h2> */}
       <PopularMovies />
     </div>
   );
