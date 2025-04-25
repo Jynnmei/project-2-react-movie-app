@@ -51,9 +51,13 @@ const PopularMovies = () => {
   };
 
   const addFavouriteMovie = (movie) => {
-    console.log("Added to favourites:", movie.fields.title);
-    const newFavouriteList = [...favourites, movie];
-    setFavourites(newFavouriteList);
+    const alreadyFavourited = favourites.some((fav) => fav.id === movie.id);
+
+    if (alreadyFavourited) {
+      setFavourites(favourites.filter((fav) => fav.id !== movie.id));
+    } else {
+      setFavourites([...favourites, movie]);
+    }
   };
 
   const handleMovieClick = (movie) => {
@@ -64,12 +68,6 @@ const PopularMovies = () => {
   const closeModal = () => {
     setSelectedMovie(null);
   };
-
-  useEffect(() => {
-    if (selectedMovie) {
-      console.log("Selected movie changed:", selectedMovie.fields.title);
-    }
-  }, [selectedMovie]);
 
   return (
     <>
@@ -86,6 +84,7 @@ const PopularMovies = () => {
               movie={movie}
               onMovieClick={() => handleMovieClick(movie)}
               addFavouriteMovie={addFavouriteMovie}
+              isFavourite={favourites.some((fav) => fav.id === movie.id)}
             />
           </div>
         ))}
