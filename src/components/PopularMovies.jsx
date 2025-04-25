@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./Movies.css";
 import MoviesSearch from "./MoviesSearch";
+import MovieClick from "./MovieClick";
 
 const PopularMovies = () => {
   const [movies, setMovies] = useState([]);
+  const [favourites, setFavourites] = useState([]);
   const [query, setQuery] = useState("");
   const [movieFiltered, setMovieFiltered] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const url = "https://api.airtable.com/v0/appQwlxLJ1uNitKKv/Imported%20table";
   const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
 
@@ -46,6 +49,23 @@ const PopularMovies = () => {
     setMovieFiltered(filtered);
   };
 
+  const addFavouriteMovie = (movie) => {
+    console.log("Added to favourites:", movie.fields.title);
+    const newFavouriteList = [...favourites, movie];
+    setFavourites(newFavouriteList);
+  };
+
+  const handleMovieClick = (movie) => {
+    console.log("You clicked:", movie.fields.title);
+    setSelectedMovie(movie);
+  };
+
+  useEffect(() => {
+    if (selectedMovie) {
+      console.log("Selected movie changed:", selectedMovie.fields.title);
+    }
+  }, [selectedMovie]);
+
   return (
     <>
       <MoviesSearch
@@ -55,15 +75,13 @@ const PopularMovies = () => {
         placeholder="Search movies"
       />
       <div className="popular-movie">
-        {movieFiltered.map((movie, index) => (
-          <div key={index} className="movie-card">
-            <h4>{movie.fields.title}</h4>
-            <img
-              src={`https://image.tmdb.org/t/p/w200${movie.fields["Customize field type"]}`} // 可以换成你真正的图片字段名
-              alt={movie.fields.title}
-              className="movie-poster"
+        {movieFiltered.map((movie) => (
+          <div key={movie.id} className="movie-card">
+            <MovieClick
+              movie={movie}
+              onMovieClick={() => handleMovieClick(movie)}
+              addFavouriteMovie={addFavouriteMovie}
             />
-            <h5>{movie.fields.release_date}</h5>
           </div>
         ))}
       </div>
