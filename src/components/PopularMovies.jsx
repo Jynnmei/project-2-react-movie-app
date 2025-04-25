@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Movies.css";
 import MoviesSearch from "./MoviesSearch";
 import MovieClick from "./MovieClick";
+import MoviesModal from "./MoviesModal";
 
 const PopularMovies = () => {
   const [movies, setMovies] = useState([]);
@@ -60,6 +61,10 @@ const PopularMovies = () => {
     setSelectedMovie(movie);
   };
 
+  const closeModal = () => {
+    setSelectedMovie(null);
+  };
+
   useEffect(() => {
     if (selectedMovie) {
       console.log("Selected movie changed:", selectedMovie.fields.title);
@@ -85,6 +90,9 @@ const PopularMovies = () => {
           </div>
         ))}
       </div>
+      {selectedMovie && (
+        <MoviesModal movie={selectedMovie} closeModal={closeModal} />
+      )}
     </>
   );
 };
