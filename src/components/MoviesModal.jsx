@@ -6,7 +6,7 @@ const MoviesModal = (props) => {
     <div className="movies-modal-overlay">
       <div className="movies-modal">
         <img
-          src={`https://image.tmdb.org/t/p/w200${props.movie.fields["Customize field type"]}`}
+          src={`https://image.tmdb.org/t/p/w200${props.movie.fields.poster_path}`}
           alt={props.movie.fields.title}
           className="movie-poster"
         ></img>

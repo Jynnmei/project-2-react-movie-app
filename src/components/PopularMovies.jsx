@@ -6,18 +6,26 @@ import MoviesModal from "./MoviesModal";
 
 const PopularMovies = () => {
   const [movies, setMovies] = useState([]);
-  const [favourites, setFavourites] = useState([]);
   const [query, setQuery] = useState("");
   const [movieFiltered, setMovieFiltered] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const url = "https://api.airtable.com/v0/appQwlxLJ1uNitKKv/Imported%20table";
+  const [favourites, setFavourites] = useState([]);
+
   const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
+  const baseId = "appQwlxLJ1uNitKKv";
+  const tableName = "popularMovies";
+  const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+  const favouritesTableName = "addFavorite";
+  const favouritesUrl = `https://api.airtable.com/v0/${baseId}/${favouritesTableName}`;
+  const deleteTableName = "removeFavoriteMovies";
+  const deleteUrl = `https://api.airtable.com/v0/${baseId}/${deleteTableName}`;
 
   const getPopularMovies = async () => {
     try {
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
       });
       const data = await response.json();
@@ -30,9 +38,19 @@ const PopularMovies = () => {
     }
   };
 
-  useEffect(() => {
-    getPopularMovies();
-  }, []);
+  const getFavourites = async () => {
+    try {
+      const response = await fetch(favouritesUrl, {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      const data = await response.json();
+      setFavourites(data.records);
+    } catch (error) {
+      console.error("Error fetching favourites:", error);
+    }
+  };
 
   const handleSearch = (searchTerm) => {
     setQuery(searchTerm);
@@ -42,21 +60,69 @@ const PopularMovies = () => {
     }
 
     const lowercaseQuery = searchTerm.toLowerCase();
-
     const filtered = movies.filter((movie) =>
       movie.fields.title.toLowerCase().includes(lowercaseQuery)
     );
-
     setMovieFiltered(filtered);
   };
 
-  const addFavouriteMovie = (movie) => {
-    const alreadyFavourited = favourites.some((fav) => fav.id === movie.id);
+  const handleAddToFavourite = async (movie) => {
+    try {
+      const isAlreadyFavourite = favourites.some(
+        (fav) => fav.fields.id === movie.fields.id
+      );
 
-    if (alreadyFavourited) {
-      setFavourites(favourites.filter((fav) => fav.id !== movie.id));
-    } else {
-      setFavourites([...favourites, movie]);
+      if (isAlreadyFavourite) {
+        const recordToDelete = favourites.find(
+          (fav) => fav.fields.id === movie.fields.id
+        );
+        const deleteResponse = await fetch(
+          `${deleteUrl}/${recordToDelete.id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+            },
+          }
+        );
+
+        if (deleteResponse.ok) {
+          setFavourites(
+            favourites.filter((fav) => fav.fields.id !== movie.fields.id)
+          );
+          console.log("Removed from favourites!");
+        }
+      } else {
+        const postResponse = await fetch(favouritesUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            records: [
+              {
+                fields: {
+                  id: movie.fields.id,
+                  title: movie.fields.title,
+                  overview: movie.fields.overview,
+                  poster_path: movie.fields.poster_path,
+                  release_date: movie.fields.release_date,
+                  vote_average: movie.fields.vote_average,
+                },
+              },
+            ],
+          }),
+        });
+
+        if (postResponse.ok) {
+          const newFavourite = await postResponse.json();
+          setFavourites([...favourites, ...newFavourite.records]);
+          console.log("Added to favourites!");
+        }
+      }
+    } catch (error) {
+      console.error("Error adding to favourites:", error);
     }
   };
 
@@ -68,6 +134,11 @@ const PopularMovies = () => {
   const closeModal = () => {
     setSelectedMovie(null);
   };
+
+  useEffect(() => {
+    getPopularMovies();
+    getFavourites();
+  }, []);
 
   return (
     <>
@@ -83,8 +154,10 @@ const PopularMovies = () => {
             <MovieClick
               movie={movie}
               onMovieClick={() => handleMovieClick(movie)}
-              addFavouriteMovie={addFavouriteMovie}
-              isFavourite={favourites.some((fav) => fav.id === movie.id)}
+              addFavouriteMovie={() => handleAddToFavourite(movie)}
+              isFavourite={favourites.some(
+                (fav) => fav.fields.id === movie.fields.id
+              )}
             />
           </div>
         ))}

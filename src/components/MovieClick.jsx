@@ -1,6 +1,5 @@
 import React from "react";
 import "./Movies.css";
-import AddFavourite from "./AddFavourite";
 
 const MovieClick = (props) => {
   return (
@@ -8,18 +7,26 @@ const MovieClick = (props) => {
       <h4>{props.movie.fields.title}</h4>
       <div className="image-container">
         <img
-          src={`https://image.tmdb.org/t/p/w200${props.movie.fields["Customize field type"]}`}
+          src={`https://image.tmdb.org/t/p/w200${props.movie.fields.poster_path}`}
           alt={props.movie.fields.title}
           className="movie-poster"
           onClick={() => props.onMovieClick(props.movie)}
         ></img>
         <div className="favourite">
-          <AddFavourite
-            isFavourite={props.isFavourite}
-            handleFavouritesClick={() => props.addFavouriteMovie(props.movie)}
-          />
+          <button
+            className="heart-icon"
+            onClick={props.addFavouriteMovie}
+            style={{
+              color: props.isFavourite ? "red" : "black",
+              background: "none",
+              border: "none",
+            }}
+          >
+            {props.isFavourite ? "❤️" : "♡"}
+          </button>
         </div>
       </div>
+
       <h5>{props.movie.fields.release_date}</h5>
     </div>
   );
