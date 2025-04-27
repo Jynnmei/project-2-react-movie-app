@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import "./Movies.css";
+import MovieClick from "./MovieClick";
 
 const MovieFavourite = () => {
   const [favourites, setFavourites] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
   const baseId = "appQwlxLJ1uNitKKv";
@@ -13,6 +16,7 @@ const MovieFavourite = () => {
       const response = await fetch(favouritesUrl, {
         headers: {
           Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
       });
       const data = await response.json();
@@ -28,6 +32,7 @@ const MovieFavourite = () => {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -38,24 +43,47 @@ const MovieFavourite = () => {
     }
   };
 
+  const closeModal = () => {
+    setSelectedMovie(null);
+  };
+
   useEffect(() => {
     getFavourites();
   }, []);
 
+  const validFavourites = favourites.filter((movie) => {
+    if (!movie.fields) {
+      return false;
+    }
+
+    const fieldNames = Object.keys(movie.fields);
+    if (fieldNames.length === 0) {
+      return false;
+    }
+    return true;
+  });
+
   return (
-    <div>
-      <h1>My Favourite Movies</h1>
-      <ul>
-        {favourites.map((movie) => (
-          <li key={movie.id}>
-            <h3>{movie.fields.title}</h3>
-            <p>{movie.fields.release_date}</p>
-            <button onClick={() => handleRemoveFavourite(movie)}>
-              ❤️ Remove
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="favorites">
+      <div className="popular-movie">
+        {validFavourites.length > 0 ? (
+          validFavourites.map((movie) => (
+            <div key={movie.id} className="movie-card">
+              <MovieClick
+                movie={movie}
+                onMovieClick={() => setSelectedMovie(movie)}
+                addFavouriteMovie={() => handleRemoveFavourite(movie)}
+                isFavourite={true}
+              />
+            </div>
+          ))
+        ) : (
+          <p>No favourites yet!</p>
+        )}
+      </div>
+      {selectedMovie && (
+        <MoviesModal movie={selectedMovie} closeModal={closeModal} />
+      )}
     </div>
   );
 };
