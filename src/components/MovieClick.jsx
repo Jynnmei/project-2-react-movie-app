@@ -25,6 +25,18 @@ const MovieClick = (props) => {
             {props.isFavourite ? "❤️" : "♡"}
           </button>
         </div>
+        <div className="watch">
+          <button
+            className="movie-icon"
+            onClick={props.addHistoryMovie}
+            style={{
+              background: "none",
+              border: "none",
+            }}
+          >
+            {props.isHistory ? "👁️" : "🎥"}
+          </button>
+        </div>
       </div>
 
       <h5>{props.movie.fields.release_date}</h5>

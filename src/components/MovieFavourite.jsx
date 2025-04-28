@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Movies.css";
 import MovieClick from "./MovieClick";
+import MoviesModal from "./MoviesModal";
 
 const MovieFavourite = () => {
   const [favourites, setFavourites] = useState([]);

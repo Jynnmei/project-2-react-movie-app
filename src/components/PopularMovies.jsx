@@ -53,6 +53,10 @@ const PopularMovies = (props) => {
               isFavourite={props.favourites.some(
                 (fav) => fav.fields.id === movie.fields.id
               )}
+              addHistoryMovie={() => props.onAddToHistory(movie)}
+              isHistory={props.historyMovie.some(
+                (his) => his.fields.id === movie.fields.id
+              )}
             />
           </div>
         ))}

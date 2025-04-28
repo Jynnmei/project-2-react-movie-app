@@ -28,7 +28,7 @@ const NavBar = () => {
               className={(navData) => (navData.isActive ? styles.active : "")}
               to="/favorite"
             >
-              Favorite
+              Favourite
             </NavLink>
           </li>
         </ul>

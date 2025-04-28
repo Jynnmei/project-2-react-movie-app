@@ -1,4 +1,5 @@
-.popular-movie {
+.popular-movie,
+.history-movie {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -52,7 +53,7 @@ h5 {
   background-color: transparent;
   opacity: 1;
   color: black;
-  z-index: 2;
+  z-index: 4;
 }
 
 .image-container {
@@ -104,4 +105,18 @@ h5 {
 .movies-modal p {
   font-size: 14px;
   color: #555;
+}
+
+.movie-icon {
+  margin-left: 180px;
+}
+
+.watch {
+  position: absolute;
+  bottom: -30px;
+  left: 10px;
+  background-color: transparent;
+  opacity: 1;
+  color: black;
+  z-index: 2;
 }

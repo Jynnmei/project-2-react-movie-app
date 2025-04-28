@@ -5,6 +5,7 @@ const Home = () => {
   const [movies, setMovies] = useState([]);
   const [favourites, setFavourites] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [historyMovie, setHistoryMovie] = useState([]);
 
   const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
   const baseId = "appQwlxLJ1uNitKKv";
@@ -12,8 +13,8 @@ const Home = () => {
   const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
   const favouritesTableName = "addFavorite";
   const favouritesUrl = `https://api.airtable.com/v0/${baseId}/${favouritesTableName}`;
-  // const deleteTableName = "removeFavoriteMovies";
-  // const deleteUrl = `https://api.airtable.com/v0/${baseId}/${deleteTableName}`;
+  const historyTableName = "historyMovies";
+  const historyUrl = `https://api.airtable.com/v0/${baseId}/${historyTableName}`;
 
   const getPopularMovies = async () => {
     try {
@@ -108,9 +109,86 @@ const Home = () => {
     }
   };
 
+  const getHistory = async () => {
+    try {
+      const response = await fetch(historyUrl, {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setHistoryMovie(data.records);
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
+
+  const handleAddToHistory = async (movie) => {
+    try {
+      const isAlreadyHistory = historyMovie.some(
+        (his) => his.fields.id === movie.fields.id
+      );
+
+      if (isAlreadyHistory) {
+        const recordToDelete = historyMovie.find(
+          (his) => his.fields.id === movie.fields.id
+        );
+        const deleteResponse = await fetch(
+          `${historyUrl}/${recordToDelete.id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (deleteResponse.ok) {
+          setHistoryMovie(
+            historyMovie.filter((his) => his.fields.id !== movie.fields.id)
+          );
+          console.log("Removed from history!");
+        }
+      } else {
+        const postResponse = await fetch(historyUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            records: [
+              {
+                fields: {
+                  id: movie.fields.id,
+                  title: movie.fields.title,
+                  overview: movie.fields.overview,
+                  poster_path: movie.fields.poster_path,
+                  release_date: movie.fields.release_date,
+                  vote_average: movie.fields.vote_average,
+                },
+              },
+            ],
+          }),
+        });
+
+        if (postResponse.ok) {
+          const newHistory = await postResponse.json();
+          setHistoryMovie([...historyMovie, ...newHistory.records]);
+          console.log("Added to history!");
+        }
+      }
+    } catch (error) {
+      console.error("Error adding to history:", error);
+    }
+  };
+
   useEffect(() => {
     getPopularMovies();
     getFavourites();
+    getHistory();
   }, []);
 
   return (
@@ -121,6 +199,8 @@ const Home = () => {
         selectedMovie={selectedMovie}
         setSelectedMovie={setSelectedMovie}
         onAddToFavourite={handleAddToFavourite}
+        historyMovie={historyMovie}
+        onAddToHistory={handleAddToHistory}
       />
     </div>
   );
