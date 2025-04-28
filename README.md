@@ -71,7 +71,7 @@ npm run dev
 - Add the following to your .env file:
 
 ```
-VITE_AIRTABLE_API_KEY=your_airtable_api_key
+VITE_AIRTABLE_API_KEY=patoLwD3xr2yhokXk.e59d215409622b09ba2410195a044bc4663ba4b2e3d6f0412abea0f41c2323e6
 ```
 
 ⚡ Important:
@@ -82,7 +82,7 @@ VITE_AIRTABLE_API_KEY=your_airtable_api_key
 
 This project uses:
 
-- A public movie API to fetch movie data (e.g., TMDB API or other)
+- A public movie API to fetch movie data (EX: TMDB API)
 
 - Airtable API to manage favorites and watch history.
 
