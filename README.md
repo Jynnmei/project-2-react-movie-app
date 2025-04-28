@@ -45,6 +45,8 @@ Users can:
 
 - React Router
 
+- TMDB API
+
 - Airtable API
 
 ## **_Project Setup_**
