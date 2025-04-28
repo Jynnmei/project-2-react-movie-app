@@ -63,6 +63,62 @@ npm install react-router-dom
 npm run dev
 ```
 
+## **_Fetch TMDb API Data and Transfer to Airtable_**
+
+### **Step 1: Get TMDb API Data**
+
+1. Sign up on TMDb and get your API Key.
+
+2. Use the following endpoint to get popular movie data:
+
+```
+GET https://api.themoviedb.org/3/movie/popular?api_key=YOUR_API_KEY
+```
+
+3. The response will return movie data in JSON format.
+
+### **Step 2: Transfer Data to Airtable**
+
+1. Create a new base in Airtable with fields like Title, Overview, Release Date, and Poster URL.
+
+2. Use Airtable API to send data using a GET request. You can use JSX to automate this process. Example:
+
+```
+const baseId = "Airtable base ID;
+const tableName = "Airtable table name";
+const apiKey = "Your Airtable API key";
+const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+const getPopularMovies = async () => {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      console.log("Airtable Data:", data);
+      setMovies(data.records);
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+```
+
+### **Step 3: Test with Postman**
+
+1. Get your Airtable API link from the Airtable API Docs.
+
+2. In Postman, send a GET request to your Airtable API endpoint to retrieve the movie data:
+
+```
+GET `https://api.airtable.com/v0/${baseId}/${tableName}`
+```
+
+3. Check the response to see if the data was successfully transferred.
+
 ## **_Environment Variables_**
 
 - This project uses environment variables to connect to the Airtable API.
