@@ -10,7 +10,7 @@ const NavBar = () => {
           <li>
             <NavLink
               className={(navData) => (navData.isActive ? styles.active : "")}
-              to="/"
+              to="/home"
             >
               Home
             </NavLink>

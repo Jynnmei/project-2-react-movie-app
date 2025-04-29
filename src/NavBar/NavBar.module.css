@@ -32,7 +32,7 @@
 
 .navbar a:hover,
 .navbar a.active {
-  color: whitesmoke;
+  color: rgb(175, 244, 91);
   padding-bottom: 0.25rem;
-  border-bottom: 4px solid whitesmoke;
+  border-bottom: 4px solid rgb(175, 244, 91);
 }
