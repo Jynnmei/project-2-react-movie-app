@@ -43,7 +43,6 @@ Airtable is used for storing and managing favourites/history, making user data h
 ![Hierarchy Screenshot](./README/Slide1.JPG)
 ![Hierarchy Screenshot](./README/Slide2.JPG)
 ![Hierarchy Screenshot](./README/Slide3.JPG)
-![Hierarchy Screenshot](./README/Slide4.JPG)
 
 ## **_Main Technologies_**
 
