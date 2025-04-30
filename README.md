@@ -1,8 +1,8 @@
-# Porject 2 - Movies App
+# 🎬Porject 2 - Movies App
 
 ## **_Description_**
 
-This app allows users to discover popular movies, search by name, view detailed movie information, track their watch history, and save their favorite movies.
+This app allows users to discover popular movies, view detailed movie information, track their watch history, and save their favorite movies.
 
 ![Movie Screenshot](./README/Image-1.png)
 ![Movie Screenshot](./README/Image-2.png)
@@ -11,26 +11,33 @@ This app allows users to discover popular movies, search by name, view detailed 
 
 ## **_Movies Concept_**
 
-The Movie App is built to help users easily find, track, and organize their favorite movies. It aims to make discovering and managing movies simple, fun, and personal.
+This Movie App allows users to:
+
+- Discover popular movies
+- View detailed movie information
+- Track their **watch history**
+- Save their **favorite** movies
+
+Users can easily manage which movies they’ve favorited or watched, all in one place.
 
 ## **_About The Project_**
 
-In this project, I wanted to create a Movie App using React, React Router, and Airtable.
-The app is designed for movie lovers to easily discover, search, and organize their favorite and watched movies.
+The app is built using:
+
+- **React**
+- **React Router**
+- **TMDB API** (to fetch movie data)
+- **Airtable API** (to store user-selected data: favourites & watch history)
 
 Users can:
 
-- View a list of popular movies.
+- 🔥 View a list of popular movies
+- 📖 View detailed movie info (overview, rating, release date, poster)
+- 💖 Add/remove movies to **Favourites**
+- 🕒 Track movies in **Watch History**
+- ✅ See which movies are already saved directly on the homepage
 
-- Search movies by name.
-
-- View detailed information like description and rating.
-
-- Save favorite movies and track their watch history.
-
-- See which movies they have already watched or favorited directly on the homepage.
-
-- I also used Airtable to store user favorites and history, making data management simple and efficient.
+Airtable is used for storing and managing favourites/history, making user data handling simple and efficient.
 
 ## **_App Hierarchy_**
 
@@ -63,11 +70,11 @@ npm install react-router-dom
 npm run dev
 ```
 
-## **_Fetch TMDb API Data and Transfer to Airtable_**
+## **_Fetch TMDB API Data_**
 
-### **Step 1: Get TMDb API Data**
+### **Step 1: Get TMDB API Data**
 
-1. Sign up on TMDb and get your API Key.
+1. Sign up on TMDB and get your API Key.
 
 2. Use the following endpoint to get popular movie data:
 
@@ -75,39 +82,103 @@ npm run dev
 GET https://api.themoviedb.org/3/movie/popular?api_key=YOUR_API_KEY
 ```
 
-3. The response will return movie data in JSON format.
+Example response:
 
-### **Step 2: Transfer Data to Airtable**
+```
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/fTrQsdMS2MUw00RnzH0r3JWHhts.jpg",
+      "genre_ids": [
+        28,
+        80,
+        53
+      ],
+      "id": 1197306,
+      "original_language": "en",
+      "original_title": "A Working Man",
+      "overview": "Levon Cade left behind a decorated military career in the black ops to live a simple life working construction. But when his boss's daughter, who is like family to him, is taken by human traffickers, his search to bring her home uncovers a world of corruption far greater than he ever could have imagined.",
+      "popularity": 581.2791,
+      "poster_path": "/xUkUZ8eOnrOnnJAfusZUqKYZiDu.jpg",
+      "release_date": "2025-03-26",
+      "title": "A Working Man",
+      "video": false,
+      "vote_average": 6.437,
+      "vote_count": 490
+    }
+  ]
+}
+```
 
-1. Create a new base in Airtable with fields like Title, Overview, Release Date, and Poster URL.
+3. Test this in Postman by sending a **GET** request to the URL above.
 
-2. Use Airtable API to send data using a GET request. You can use JSX to automate this process. Example:
+## **_Airtable for Favourites & History_**
+
+Instead of transferring all TMDB data into Airtable, only user actions (Add to Favourites / Add to History) are sent to Airtable via API calls.
+
+### **Airtable Table Structure:**
+
+Table 1: Favourites
+
+Table 2: History
+
+Each table includes:
+
+- Title (Single line text)
+
+- Overview (Long text)
+
+- Release Date (Date)
+
+- Poster URL (URL)
+
+### **Add Movie to Airtable Example**
 
 ```
 const baseId = "Airtable base ID;
 const tableName = "Airtable table name";
 const apiKey = "Your Airtable API key";
-const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+const favouritesUrl = `https://api.airtable.com/v0/${baseId}/${tableName}`;
 
-const getPopularMovies = async () => {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      console.log("Airtable Data:", data);
-      setMovies(data.records);
-      return data;
-    } catch (err) {
-      console.log(err);
+const postMovieToAirtable = async (movie) => {
+  try {
+    const postResponse = await fetch(favouritesUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        records: [
+          {
+            fields: {
+              id: movie.id,
+              title: movie.title,
+              overview: movie.overview,
+              poster_path: movie.poster_path,
+              release_date: movie.release_date,
+              vote_average: movie.vote_average,
+            },
+          },
+        ],
+      }),
+    });
+
+    if (postResponse.ok) {
+      const newFavourite = await postResponse.json();
+      setFavourites([...favourites, ...newFavourite.records]);
+      console.log("Added to favourites!");
     }
-  };
+  } catch (error) {
+    console.error("Error adding to favourites:", error);
+  }
+};
+
 ```
 
-### **Step 3: Test with Postman**
+## **Test Airtable API with Postman**
 
 1. Get your Airtable API link from the Airtable API Docs.
 
@@ -121,26 +192,26 @@ GET `https://api.airtable.com/v0/${baseId}/${tableName}`
 
 ## **_Environment Variables_**
 
-- This project uses environment variables to connect to the Airtable API.
+- This project uses environment variables to connect to the TMDB & Airtable API.
   You need to create a .env file at the root of your project (outside the src folder).
 
 - Add the following to your .env file:
 
 ```
+VITE_TMDB_API_KEY=your_TMDB_api_key
+
 VITE_AIRTABLE_API_KEY=your_airtable_api_key
 ```
 
 ⚡ Important:
 
-- Replace your_airtable_api_key, your_airtable_base_id, and your_table_name with your actual Airtable credentials.
+- Replace your_TMDB_api_key, your_airtable_api_key, your_airtable_base_id, and your_table_name with your actual credentials.
 
-## **_API_**
+## **_API Used_**
 
-This project uses:
+- TMDb API — For movie data
 
-- A public movie API to fetch movie data (EX: TMDB API)
-
-- Airtable API to manage favorites and watch history.
+- Airtable API — For saving Favourites & History
 
 ## **_Resources & Attribution_**
 
@@ -175,3 +246,7 @@ Here are some of the helpful resources and tutorials I used while building this 
 ### 3. Multi-Language Support
 
 - Expand language options to support more languages, allowing international users to access the app in their native language.
+
+### 4. Search Movie by Name
+
+Reintroduce the search bar to allow users to quickly find movies by typing the movie title.
