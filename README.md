@@ -7,7 +7,6 @@ This app allows users to discover popular movies, view detailed movie informatio
 ![Movie Screenshot](./README/Image-1.png)
 ![Movie Screenshot](./README/Image-2.png)
 ![Movie Screenshot](./README/Image-3.png)
-![Movie Screenshot](./README/Image-4.png)
 
 ## **_Movies Concept_**
 
