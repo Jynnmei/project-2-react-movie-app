@@ -2,15 +2,17 @@ import React from "react";
 import "./Movies.css";
 
 const MovieClick = (props) => {
+  const movieData = props.movie.fields || props.movie;
+
   return (
     <div className="movie-click">
-      <h4>{props.movie.fields.title}</h4>
+      <h4>{movieData.title}</h4>
       <div className="image-container">
         <img
-          src={`https://image.tmdb.org/t/p/w200${props.movie.fields.poster_path}`}
-          alt={props.movie.fields.title}
+          src={`https://image.tmdb.org/t/p/w200${movieData.poster_path}`}
+          alt={movieData.title}
           className="movie-poster"
-          onClick={() => props.onMovieClick(props.movie)}
+          onClick={() => props.onMovieClick(movieData)}
         ></img>
         <div className="favourite">
           <button
@@ -39,7 +41,7 @@ const MovieClick = (props) => {
         </div>
       </div>
 
-      <h5>{props.movie.fields.release_date}</h5>
+      <h5>{movieData.release_date}</h5>
     </div>
   );
 };

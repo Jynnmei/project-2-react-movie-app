@@ -72,8 +72,8 @@ const MovieFavourite = () => {
             <div key={movie.id} className="movie-card">
               <MovieClick
                 movie={movie}
-                onMovieClick={() => setSelectedMovie(movie)}
-                addFavouriteMovie={() => handleRemoveFavourite(movie)}
+                onMovieClick={() => setSelectedMovie(movie.fields)}
+                addRemoveMovie={() => handleRemoveFavourite(movie)}
                 isFavourite={true}
               />
             </div>

@@ -7,10 +7,9 @@ const Home = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [historyMovie, setHistoryMovie] = useState([]);
 
+  const apiTMDBKey = import.meta.env.VITE_TMDB_API_KEY;
   const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
   const baseId = "appQwlxLJ1uNitKKv";
-  const tableName = "popularMovies";
-  const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
   const favouritesTableName = "addFavorite";
   const favouritesUrl = `https://api.airtable.com/v0/${baseId}/${favouritesTableName}`;
   const historyTableName = "historyMovies";
@@ -18,16 +17,12 @@ const Home = () => {
 
   const getPopularMovies = async () => {
     try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&api_key=${apiTMDBKey}`
+      );
       const data = await response.json();
-      console.log("Airtable Data:", data);
-      setMovies(data.records);
-      return data;
+      console.log("Data:", data);
+      setMovies(data.results);
     } catch (err) {
       console.log(err);
     }
@@ -51,12 +46,12 @@ const Home = () => {
   const handleAddToFavourite = async (movie) => {
     try {
       const isAlreadyFavourite = favourites.some(
-        (fav) => fav.fields.id === movie.fields.id
+        (fav) => fav.fields.id === movie.id
       );
 
       if (isAlreadyFavourite) {
         const recordToDelete = favourites.find(
-          (fav) => fav.fields.id === movie.fields.id
+          (fav) => fav.fields.id === movie.id
         );
         const deleteResponse = await fetch(
           `${favouritesUrl}/${recordToDelete.id}`,
@@ -70,9 +65,7 @@ const Home = () => {
         );
 
         if (deleteResponse.ok) {
-          setFavourites(
-            favourites.filter((fav) => fav.fields.id !== movie.fields.id)
-          );
+          setFavourites(favourites.filter((fav) => fav.fields.id !== movie.id));
           console.log("Removed from favourites!");
         }
       } else {
@@ -86,12 +79,12 @@ const Home = () => {
             records: [
               {
                 fields: {
-                  id: movie.fields.id,
-                  title: movie.fields.title,
-                  overview: movie.fields.overview,
-                  poster_path: movie.fields.poster_path,
-                  release_date: movie.fields.release_date,
-                  vote_average: movie.fields.vote_average,
+                  id: movie.id,
+                  title: movie.title,
+                  overview: movie.overview,
+                  poster_path: movie.poster_path,
+                  release_date: movie.release_date,
+                  vote_average: movie.vote_average,
                 },
               },
             ],
@@ -127,12 +120,12 @@ const Home = () => {
   const handleAddToHistory = async (movie) => {
     try {
       const isAlreadyHistory = historyMovie.some(
-        (his) => his.fields.id === movie.fields.id
+        (his) => his.fields.id === movie.id
       );
 
       if (isAlreadyHistory) {
         const recordToDelete = historyMovie.find(
-          (his) => his.fields.id === movie.fields.id
+          (his) => his.fields.id === movie.id
         );
         const deleteResponse = await fetch(
           `${historyUrl}/${recordToDelete.id}`,
@@ -147,7 +140,7 @@ const Home = () => {
 
         if (deleteResponse.ok) {
           setHistoryMovie(
-            historyMovie.filter((his) => his.fields.id !== movie.fields.id)
+            historyMovie.filter((his) => his.fields.id !== movie.id)
           );
           console.log("Removed from history!");
         }
@@ -162,12 +155,12 @@ const Home = () => {
             records: [
               {
                 fields: {
-                  id: movie.fields.id,
-                  title: movie.fields.title,
-                  overview: movie.fields.overview,
-                  poster_path: movie.fields.poster_path,
-                  release_date: movie.fields.release_date,
-                  vote_average: movie.fields.vote_average,
+                  id: movie.id,
+                  title: movie.title,
+                  overview: movie.overview,
+                  poster_path: movie.poster_path,
+                  release_date: movie.release_date,
+                  vote_average: movie.vote_average,
                 },
               },
             ],

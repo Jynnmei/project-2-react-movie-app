@@ -72,8 +72,8 @@ const MovieHistory = () => {
             <div key={movie.id} className="movie-card">
               <MovieClick
                 movie={movie}
-                onMovieClick={() => setSelectedHistoryMovie(movie)}
-                addHistoryMovie={() => handleRemoveHistory(movie)}
+                onMovieClick={() => setSelectedHistoryMovie(movie.fields)}
+                onRemoveHistory={() => handleRemoveHistory(movie)}
                 isHistory={true}
               />
             </div>

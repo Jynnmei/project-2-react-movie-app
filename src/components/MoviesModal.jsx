@@ -2,21 +2,23 @@ import React from "react";
 import "./Movies.css";
 
 const MoviesModal = (props) => {
+  const movieData = props.movie.fields || props.movie;
+
   return (
     <div className="movies-modal-overlay">
       <div className="movies-modal">
         <img
-          src={`https://image.tmdb.org/t/p/w200${props.movie.fields.poster_path}`}
-          alt={props.movie.fields.title}
+          src={`https://image.tmdb.org/t/p/w200${movieData.poster_path}`}
+          alt={movieData.title}
           className="movie-poster"
         ></img>
         <div className="text">
-          <h3>{props.movie.fields.title}</h3>
-          <p>{props.movie.fields.overview}</p>
+          <h3>{movieData.title}</h3>
+          <p>{movieData.overview}</p>
           <p>
-            Rating: <span>{props.movie.fields.vote_average.toFixed(1)}</span>
+            Rating: <span>{movieData.vote_average.toFixed(1)}</span>
           </p>
-          <p>{props.movie.fields.release_date}</p>
+          <p>{movieData.release_date}</p>
           <button onClick={props.closeModal}>Close</button>
         </div>
       </div>
